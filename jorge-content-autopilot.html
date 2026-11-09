@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Jorge Content Autopilot — a personal automation tool that posts Jorge's own short-form videos to his own TikTok account. Terms of Service and Privacy Policy." />
+    <link rel="icon" href="data:," />
+    <title>Jorge Content Autopilot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --bg-soft: #f4f4f6;
+        --surface: #ffffff;
+        --ink: #101014;
+        --ink-2: #3f3f46;
+        --muted: #6b6b76;
+        --line: #e4e4e7;
+        --teal: #0e7490;
+        --teal-soft: #ecfeff;
+        --red: #e11d48;
+        --red-soft: #fff1f2;
+        --header-bg: rgba(255,255,255,.92);
+        --shadow: 0 1px 2px rgba(16,16,20,.05), 0 8px 24px rgba(16,16,20,.06);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b0b0e;
+          --bg-soft: #121216;
+          --surface: #141419;
+          --ink: #f4f4f5;
+          --ink-2: #d4d4d8;
+          --muted: #a1a1aa;
+          --line: #26262c;
+          --teal: #22d3ee;
+          --teal-soft: #0c2a33;
+          --red: #fb7185;
+          --red-soft: #2a1218;
+          --header-bg: rgba(11,11,14,.92);
+          --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--teal); }
+      .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+      /* Header */
+      header {
+        position: sticky; top: 0; z-index: 40;
+        background: var(--header-bg);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+      }
+      .header-in {
+        max-width: 960px; margin: 0 auto; padding: 0 20px;
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        min-height: 60px; flex-wrap: wrap;
+      }
+      .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); padding: 10px 0; }
+      .brand-mark {
+        width: 34px; height: 34px; border-radius: 9px; flex: none;
+        background: var(--ink); color: var(--bg);
+        display: grid; place-items: center;
+      }
+      .brand-mark svg { display: block; }
+      .brand-name { font-weight: 800; letter-spacing: -.02em; font-size: 16.5px; line-height: 1.15; }
+      .brand-sub { font-size: 11.5px; color: var(--muted); font-weight: 500; letter-spacing: .02em; }
+      nav { display: flex; gap: 4px; flex-wrap: wrap; padding: 8px 0; }
+      nav button {
+        appearance: none; border: 1px solid transparent; background: transparent; cursor: pointer;
+        font: inherit; font-size: 14px; font-weight: 600; color: var(--ink-2);
+        padding: 8px 13px; border-radius: 999px;
+      }
+      nav button:hover { background: var(--bg-soft); }
+      nav button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+
+      main { max-width: 960px; margin: 0 auto; padding: 0 20px 72px; }
+      .view { display: none; }
+      .view.active { display: block; }
+
+      /* Hero */
+      .hero { padding: 52px 0 8px; max-width: 720px; }
+      .status-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+      .chip {
+        display: inline-flex; align-items: center; gap: 7px;
+        font-size: 12.5px; font-weight: 600; padding: 5px 11px; border-radius: 999px;
+        border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+      }
+      .chip .dot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; flex: none; }
+      .chip.teal { background: var(--teal-soft); border-color: transparent; color: var(--teal); }
+      h1 { font-size: clamp(34px, 6vw, 54px); line-height: 1.04; letter-spacing: -.03em; font-weight: 800; margin: 0 0 18px; }
+      .lede { font-size: 18px; line-height: 1.65; color: var(--ink-2); margin: 0 0 14px; max-width: 640px; }
+      .lede strong { color: var(--ink); }
+      .account-line { font-size: 14.5px; color: var(--muted); margin: 0; }
+      .account-line .mono { color: var(--ink-2); font-size: 13.5px; }
+
+      /* Fact strip */
+      .facts {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+        background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+        margin: 36px 0 8px;
+      }
+      .fact { background: var(--surface); padding: 16px 18px; }
+      .fact dt { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 5px; }
+      .fact dd { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+      .fact dd span { display: block; font-size: 12.5px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+
+      section.block { padding: 40px 0 4px; }
+      h2 { font-size: 25px; letter-spacing: -.02em; font-weight: 800; margin: 0 0 8px; }
+      .block-intro { color: var(--ink-2); margin: 0 0 22px; max-width: 640px; font-size: 15.5px; }
+
+      /* Steps */
+      .steps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+      .steps li { display: flex; gap: 18px; padding: 20px 2px; border-bottom: 1px solid var(--line); }
+      .step-num {
+        font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 500;
+        width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--ink);
+        display: grid; place-items: center; flex: none; margin-top: 2px;
+      }
+      .steps h3 { margin: 0 0 4px; font-size: 16.5px; font-weight: 700; letter-spacing: -.01em; }
+      .steps p { margin: 0; color: var(--ink-2); font-size: 15px; max-width: 620px; }
+      .scope-tag { font-family: "IBM Plex Mono", monospace; font-size: 12px; background: var(--bg-soft); border: 1px solid var(--line); padding: 1px 7px; border-radius: 6px; white-space: nowrap; }
+
+      /* Two-col lists */
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+      .panel { border: 1px solid var(--line); border-radius: 14px; padding: 22px; background: var(--surface); box-shadow: var(--shadow); }
+      .panel h3 { margin: 0 0 12px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 9px; }
+      .panel ul { margin: 0; padding: 0; list-style: none; }
+      .panel li { padding: 7px 0 7px 24px; position: relative; font-size: 14.5px; color: var(--ink-2); border-bottom: 1px dashed var(--line); }
+      .panel li:last-child { border-bottom: 0; }
+      .panel li::before { position: absolute; left: 2px; top: 7px; font-weight: 700; }
+      .panel.does li::before { content: "✓"; color: var(--teal); }
+      .panel.doesnt li::before { content: "✕"; color: var(--red); }
+
+      .note {
+        border: 1px solid var(--line); border-left: 3px solid var(--teal);
+        background: var(--bg-soft); border-radius: 0 12px 12px 0;
+        padding: 16px 18px; font-size: 14.5px; color: var(--ink-2); margin: 22px 0 0;
+      }
+      .note strong { color: var(--ink); }
+
+      /* Legal */
+      .legal-head { padding: 44px 0 6px; max-width: 720px; }
+      .legal-head h1 { font-size: clamp(30px, 5vw, 42px); }
+      .legal-meta { font-size: 13.5px; color: var(--muted); font-family: "IBM Plex Mono", monospace; }
+      .legal { max-width: 720px; }
+      .legal h2 { font-size: 18.5px; margin: 34px 0 8px; letter-spacing: -.01em; }
+      .legal h2 .n { color: var(--teal); font-family: "IBM Plex Mono", monospace; font-size: 14px; margin-right: 8px; }
+      .legal p, .legal li { font-size: 15.5px; color: var(--ink-2); }
+      .legal p { margin: 0 0 12px; }
+      .legal ul { margin: 0 0 12px; padding-left: 22px; }
+      .legal li { margin-bottom: 6px; }
+      .legal strong { color: var(--ink); }
+      .legal code { font-family: "IBM Plex Mono", monospace; font-size: 13px; background: var(--bg-soft); border: 1px solid var(--line); padding: 0 5px; border-radius: 5px; }
+
+      /* Footer */
+      footer { border-top: 1px solid var(--line); margin-top: 56px; }
+      .footer-in {
+        max-width: 960px; margin: 0 auto; padding: 26px 20px 34px;
+        display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap;
+        font-size: 13.5px; color: var(--muted);
+      }
+      .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+      .footer-links button { appearance: none; border: 0; background: none; cursor: pointer; font: inherit; color: var(--ink-2); font-weight: 600; padding: 0; }
+      .footer-links button:hover { color: var(--teal); }
+
+      @media (max-width: 720px) {
+        .facts { grid-template-columns: 1fr 1fr; }
+        .cols { grid-template-columns: 1fr; }
+        .hero { padding-top: 36px; }
+        .header-in { justify-content: flex-start; }
+        nav { order: 3; width: 100%; padding-top: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-in">
+        <a class="brand" href="#overview" data-nav="overview">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3" fill="currentColor" stroke="none"></polygon></svg>
+          </span>
+          <span>
+            <span class="brand-name">Jorge Content Autopilot</span><br />
+            <span class="brand-sub">Personal TikTok posting tool</span>
+          </span>
+        </a>
+        <nav role="tablist" aria-label="Site sections">
+          <button role="tab" data-nav="overview" aria-selected="true">Overview</button>
+          <button role="tab" data-nav="terms" aria-selected="false">Terms of Service</button>
+          <button role="tab" data-nav="privacy" aria-selected="false">Privacy Policy</button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- ============ OVERVIEW ============ -->
+      <div class="view active" id="view-overview">
+        <div class="hero">
+          <div class="status-row">
+            <span class="chip"><span class="dot"></span> Single-user app</span>
+            <span class="chip teal">TikTok Login Kit + Content Posting API</span>
+          </div>
+          <h1>One creator. His own videos. Posted to his own account.</h1>
+          <p class="lede">Jorge Content Autopilot is a <strong>personal automation tool built for one person</strong> — Jorge, the creator behind the TikTok account <strong>@jorgethecoach</strong>. It signs Jorge in with TikTok Login Kit and uploads his own short-form videos to his own account through TikTok's official Content Posting API, either as direct posts or as inbox drafts for final review.</p>
+          <p class="account-line">Connected account: <span class="mono">@jorgethecoach</span> · Display name: “mac savage” · Operator: Jorge Content Autopilot</p>
+        </div>
+
+        <dl class="facts">
+          <div class="fact"><dt>Users</dt><dd>1<span>The account owner only</span></dd></div>
+          <div class="fact"><dt>Content</dt><dd>Jorge's own<span>Videos he creates</span></dd></div>
+          <div class="fact"><dt>API scopes</dt><dd>2<span>video.publish · video.upload</span></dd></div>
+          <div class="fact"><dt>Data sold</dt><dd>None<span>No ads, no tracking</span></dd></div>
+        </dl>
+
+        <section class="block">
+          <h2>How it works</h2>
+          <p class="block-intro">Three steps, all through TikTok's official developer platform. The app never touches any account other than Jorge's own.</p>
+          <ol class="steps">
+            <li>
+              <span class="step-num">1</span>
+              <div>
+                <h3>Sign-in with Login Kit</h3>
+                <p>Jorge authorizes the app on TikTok's own sign-in screen. The app receives an access token scoped to his account only — it cannot see his password, and he can revoke access at any time from TikTok's settings.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-num">2</span>
+              <div>
+                <h3>Upload his own video <span class="scope-tag">video.upload</span></h3>
+                <p>A finished video file from Jorge's own content workflow is uploaded to his TikTok inbox as a draft, where he can review it in the TikTok app before it goes live.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-num">3</span>
+              <div>
+                <h3>Direct post <span class="scope-tag">video.publish</span></h3>
+                <p>When Jorge chooses, the app publishes the video directly to @jorgethecoach. Every post is flagged as AI-generated content (<span class="mono">is_aigc</span>) and marked as promoting his own business (<span class="mono">brand_organic</span>), because the videos are produced with AI tools for his own brand.</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="block">
+          <h2>What it does — and doesn't do</h2>
+          <p class="block-intro">The scope is deliberately narrow. This is not a public product, a scheduling service for other creators, or a growth tool.</p>
+          <div class="cols">
+            <div class="panel does">
+              <h3>It does</h3>
+              <ul>
+                <li>Post and draft Jorge's own videos on @jorgethecoach</li>
+                <li>Use only TikTok's official Login Kit and Content Posting API</li>
+                <li>Flag every post as AI-generated, own-business content</li>
+                <li>Run only when Jorge runs it — no posting on anyone else's behalf</li>
+              </ul>
+            </div>
+            <div class="panel doesnt">
+              <h3>It doesn't</h3>
+              <ul>
+                <li>Access, post to, or read any other user's account or data</li>
+                <li>Scrape TikTok, buy engagement, or automate likes, follows, or comments</li>
+                <li>Collect data from viewers or followers</li>
+                <li>Sell, rent, or share any data with third parties</li>
+              </ul>
+            </div>
+          </div>
+          <div class="note"><strong>AI disclosure:</strong> Jorge's videos are created with AI assistance. The app sets TikTok's AI-generated content flag on every direct post so viewers and TikTok's review systems always see that disclosure.</div>
+        </section>
+
+        <section class="block">
+          <h2>Legal</h2>
+          <p class="block-intro">The full documents govern how this app operates. They're short, because the app is small.</p>
+          <div class="cols">
+            <div class="panel">
+              <h3>Terms of Service</h3>
+              <ul>
+                <li>What the app is and who may use it</li>
+                <li>Acceptable use and content ownership</li>
+                <li>Availability, liability, and changes</li>
+              </ul>
+              <p style="margin:14px 0 0"><button class="doc-link" data-nav="terms" style="appearance:none;border:0;background:none;cursor:pointer;font:inherit;font-weight:700;color:var(--teal);padding:0">Read the Terms →</button></p>
+            </div>
+            <div class="panel">
+              <h3>Privacy Policy</h3>
+              <ul>
+                <li>What data the app accesses (very little)</li>
+                <li>How tokens and video files are handled</li>
+                <li>Revoking access and deleting data</li>
+              </ul>
+              <p style="margin:14px 0 0"><button class="doc-link" data-nav="privacy" style="appearance:none;border:0;background:none;cursor:pointer;font:inherit;font-weight:700;color:var(--teal);padding:0">Read the Privacy Policy →</button></p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ============ TERMS ============ -->
+      <div class="view" id="view-terms">
+        <div class="legal-head">
+          <h1>Terms of Service</h1>
+          <p class="legal-meta">Effective November 8, 2026 · Last updated November 8, 2026</p>
+        </div>
+        <div class="legal">
+          <p>These Terms of Service (“Terms”) govern the use of <strong>Jorge Content Autopilot</strong> (the “App”), a personal software tool operated by Jorge Content Autopilot (the “Operator”). By authorizing or using the App, you agree to these Terms.</p>
+
+          <h2><span class="n">1</span>Description of the App</h2>
+          <p>Jorge Content Autopilot is a single-user automation tool. It connects to one TikTok account — <strong>@jorgethecoach</strong>, owned and controlled by the Operator — through TikTok's Login Kit, and publishes that account's own short-form videos through TikTok's Content Posting API, either as direct posts or as inbox drafts. The App is not offered to the public, has no other users, and provides no service to third parties.</p>
+
+          <h2><span class="n">2</span>Eligibility and authorized use</h2>
+          <p>The App may be used only by the Operator, on the Operator's own TikTok account. Authorization is granted through TikTok's official OAuth flow (Login Kit) and may be revoked by the account holder at any time in TikTok's settings, which immediately ends the App's access.</p>
+
+          <h2><span class="n">3</span>Acceptable use</h2>
+          <p>The App is used solely to publish content that the Operator created and owns the rights to. The App will not be used to:</p>
+          <ul>
+            <li>Access or act on any TikTok account other than the Operator's own;</li>
+            <li>Post spam, misleading content, or content that infringes another party's rights;</li>
+            <li>Automate engagement of any kind, including likes, follows, comments, or shares;</li>
+            <li>Violate TikTok's Terms of Service, Community Guidelines, or Developer Terms.</li>
+          </ul>
+
+          <h2><span class="n">4</span>Content and AI disclosure</h2>
+          <p>All content published through the App belongs to the Operator, who is solely responsible for it. Because the videos are produced with AI assistance, the App marks every direct post as AI-generated content and as promotion of the Operator's own business, using the disclosure flags provided by the Content Posting API.</p>
+
+          <h2><span class="n">5</span>Relationship with TikTok</h2>
+          <p>The App operates under TikTok's developer platform terms and uses only the permissions granted to it (<code>video.publish</code> and <code>video.upload</code>, plus basic profile information for sign-in). TikTok may suspend or terminate API access at any time under its own terms; the Operator accepts that the App's availability depends on that access. This App is not affiliated with, endorsed by, or sponsored by TikTok or ByteDance.</p>
+
+          <h2><span class="n">6</span>Availability and changes</h2>
+          <p>The App is provided “as is,” for personal use, without warranties of any kind. The Operator may modify, suspend, or discontinue the App at any time. These Terms may be updated; the current version will always be posted on this page with its effective date, and continued use after an update constitutes acceptance of the revised Terms.</p>
+
+          <h2><span class="n">7</span>Limitation of liability</h2>
+          <p>To the maximum extent permitted by law, the Operator is not liable for any indirect, incidental, or consequential damages arising from the use of the App, including loss of API access, unpublished or removed content, or actions taken by TikTok on the connected account.</p>
+
+          <h2><span class="n">8</span>Governing law</h2>
+          <p>These Terms are governed by the laws of the State of California, United States, without regard to its conflict-of-laws principles.</p>
+
+          <h2><span class="n">9</span>Contact</h2>
+          <p>Questions about these Terms: <a href="mailto:jtapster22@gmail.com">jtapster22@gmail.com</a>.</p>
+        </div>
+      </div>
+
+      <!-- ============ PRIVACY ============ -->
+      <div class="view" id="view-privacy">
+        <div class="legal-head">
+          <h1>Privacy Policy</h1>
+          <p class="legal-meta">Effective November 8, 2026 · Last updated November 8, 2026</p>
+        </div>
+        <div class="legal">
+          <p>This Privacy Policy explains what information <strong>Jorge Content Autopilot</strong> (the “App”) accesses, why, and how it is handled. The short version: the App serves exactly one user — its operator — touches only his own TikTok account and his own videos, and collects nothing from anyone else.</p>
+
+          <h2><span class="n">1</span>Who this policy covers</h2>
+          <p>The App's only user is its operator, Jorge, acting on his own TikTok account, <strong>@jorgethecoach</strong>. The App has no sign-up, no public accounts, no audience-facing features, and no access to data about TikTok viewers, followers, or any other person.</p>
+
+          <h2><span class="n">2</span>Information the App accesses</h2>
+          <ul>
+            <li><strong>TikTok authorization data.</strong> When the operator signs in with TikTok Login Kit, TikTok issues an access token and a refresh token, along with the account's Open ID and basic profile information (such as display name and username) needed to confirm which account is connected.</li>
+            <li><strong>Video files.</strong> The video files the operator chooses to publish, plus the title/caption he provides for each post. These are sent to TikTok through the Content Posting API.</li>
+            <li><strong>Post status responses.</strong> TikTok's API responses confirming whether an upload or post succeeded, so the operator can verify his own posts.</li>
+          </ul>
+          <p>The App does <strong>not</strong> access direct messages, comments, follower lists, watch history, or any other user's data, and it requests no permissions beyond what posting requires (<code>video.publish</code>, <code>video.upload</code>, and basic sign-in profile access).</p>
+
+          <h2><span class="n">3</span>How the information is used</h2>
+          <p>Authorization data is used only to authenticate the App to TikTok's API on the operator's behalf. Video files and captions are used only to create the posts and drafts the operator requests. Post status responses are used only to confirm results to the operator. Nothing is used for advertising, profiling, analytics, or any other purpose.</p>
+
+          <h2><span class="n">4</span>Sharing</h2>
+          <p>Data is sent to exactly one place: <strong>TikTok's official API</strong>, which is the entire function of the App. No data is sold, rented, shared with, or disclosed to any other third party. There are no advertising partners, analytics providers, or data brokers.</p>
+
+          <h2><span class="n">5</span>Storage and security</h2>
+          <p>Access and refresh tokens are stored in access-controlled credential storage on the operator's own systems, never in this public page, source code, or any public repository. Video files are held only as part of the operator's own content library. Reasonable technical measures are used to protect stored credentials, though no method of storage is completely secure.</p>
+
+          <h2><span class="n">6</span>Retention and deletion</h2>
+          <p>Tokens are retained only while the App remains authorized. The operator can end all access at any time by revoking the App in TikTok's settings (Settings → Manage app permissions) or by deleting the stored credentials, after which the App can no longer reach the account. Published videos remain on TikTok under TikTok's own policies and the operator's control of his account. To request deletion of any data held by the App, contact the address in Section 9.</p>
+
+          <h2><span class="n">7</span>Cookies and tracking</h2>
+          <p>This website sets no cookies and runs no analytics or tracking scripts. The App itself contains no advertising or third-party tracking technology.</p>
+
+          <h2><span class="n">8</span>Children</h2>
+          <p>The App is a personal tool for its adult operator and is not directed at children. It collects no information from children or from any member of the public.</p>
+
+          <h2><span class="n">9</span>Changes and contact</h2>
+          <p>If this policy changes, the updated version will be posted on this page with a new effective date. Questions about this policy or about data held by the App: <a href="mailto:jtapster22@gmail.com">jtapster22@gmail.com</a>.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-in">
+        <span>© 2026 Jorge Content Autopilot · A personal tool for @jorgethecoach. Not affiliated with TikTok or ByteDance.</span>
+        <span class="footer-links">
+          <button data-nav="overview">Overview</button>
+          <button data-nav="terms">Terms of Service</button>
+          <button data-nav="privacy">Privacy Policy</button>
+        </span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        var views = { overview: true, terms: true, privacy: true };
+        function show(name) {
+          if (!views[name]) name = "overview";
+          var all = document.querySelectorAll(".view");
+          for (var i = 0; i < all.length; i++) all[i].classList.remove("active");
+          document.getElementById("view-" + name).classList.add("active");
+          var tabs = document.querySelectorAll("nav [data-nav]");
+          for (var j = 0; j < tabs.length; j++) {
+            tabs[j].setAttribute("aria-selected", tabs[j].getAttribute("data-nav") === name ? "true" : "false");
+          }
+          document.title = name === "overview"
+            ? "Jorge Content Autopilot"
+            : (name === "terms" ? "Terms of Service — Jorge Content Autopilot" : "Privacy Policy — Jorge Content Autopilot");
+          window.scrollTo(0, 0);
+        }
+        function fromHash() {
+          var h = (location.hash || "").replace("#", "").replace("/", "");
+          show(h || "overview");
+        }
+        document.addEventListener("click", function (e) {
+          var t = e.target.closest("[data-nav]");
+          if (!t) return;
+          e.preventDefault();
+          var name = t.getAttribute("data-nav");
+          if (("#" + name) === location.hash) { show(name); }
+          else { location.hash = name; }
+        });
+        window.addEventListener("hashchange", fromHash);
+        fromHash();
+      })();
+    </script>
+  </body>
+</html>
